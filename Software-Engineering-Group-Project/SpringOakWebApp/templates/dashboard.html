@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <a href="/visitors?type=checked_in"><button>Checked IN Visitors ({{ checked_in_count }})</button></a>
+        <a href="/visitors?type=checked_out"><button>Checked OUT Visitors ({{ checked_out_count }})</button></a>
+        <a href="/visitors?type=registered"><button>Visitors Database ({{ registered_count }})</button></a>
+        <a href="/visitor-dashboard"><button>Visitor Dashboard</button></a>
+        <form action="/logout" method="post" style="display: inline;">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</body>
+
+</html>
+
+
