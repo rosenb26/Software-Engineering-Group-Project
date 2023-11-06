@@ -3,24 +3,28 @@ import time
 import datetime
 from flask_bootstrap import Bootstrap5
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flaskext.mysql import MySQL
+from flask_mysqldb import MySQL
+import re
 
 app = Flask(__name__)
 mysql = MySQL()
 
-# Connect to database
-app.config['MYSQL__USER'] = 'root'
+# Configure the database
+app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'wiwikiki'
 app.config['MYSQL_DB'] = 'SpringOaks'
 app.config['MYSQL_HOST'] = 'localhost'
+
+# Initialize MySQL
 mysql.init_app(app)
+
 app.config['STATIC_FOLDER'] = 'static'
 bootstrap = Bootstrap5(app)
 
-conn = mysql.connect()
-cursor = conn.cursor()
-# cursor.execute("SELECT * from Staff")
-# data = cursor.fetchone()
+# Set app context
+with app.app_context():
+    conn = mysql.connection
+    cursor = conn.cursor()
 
 # Dummy staff username and password (replace this with a secure authentication mechanism)
 STAFF_USERNAME = "admin"
