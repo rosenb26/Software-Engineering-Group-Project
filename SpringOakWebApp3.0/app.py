@@ -3,32 +3,22 @@ import time
 import datetime
 from flask_bootstrap import Bootstrap5
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flask_mysqldb import MySQL
 import re
 
 app = Flask(__name__)
-mysql = MySQL()
-
-# Configure the database
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'wiwikiki'
-app.config['MYSQL_DB'] = 'SpringOaks'
-app.config['MYSQL_HOST'] = 'localhost'
-
-# Initialize MySQL
-mysql.init_app(app)
 
 app.config['STATIC_FOLDER'] = 'static'
 bootstrap = Bootstrap5(app)
 
 # Set app context
-with app.app_context():
-    conn = mysql.connection
-    cursor = conn.cursor()
+def db_connection():
+    cursor = sqlite3.connect('database.db')
+    cursor.row_factory = sqlite3.Row
+    return cursor
 
 # Dummy staff username and password (replace this with a secure authentication mechanism)
-STAFF_USERNAME = "admin"
-STAFF_PASSWORD = "password"
+# STAFF_USERNAME = "admin"
+# STAFF_PASSWORD = "password"
 
 # In-memory list to store registered visitors
 registered_visitors = []
@@ -39,15 +29,13 @@ checked_in_visitors = []
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    cursor = db_connection()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
         # Check credentials
-        cursor.execute('SELECT * from Staff WHERE username = %s AND password =%s')
-
-        # Get staff data
-        data = cursor.fetchone()
+        data = cursor.execute('SELECT * from Staff WHERE username = %s AND password =%s').fetchall()
         if data:
             session['loggedin'] = True
             session['id'] = data['staffID']
