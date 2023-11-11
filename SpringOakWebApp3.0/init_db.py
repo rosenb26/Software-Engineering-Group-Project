@@ -2,7 +2,7 @@ import sqlite3
 
 connection = sqlite3.connect('database.db')
 
-with open('springboks.sql') as f:
+with open('springoaks.sql') as f:
     connection.executescript(f.read())
 
 cur = connection.cursor()

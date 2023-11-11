@@ -10,6 +10,9 @@ app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
 bootstrap = Bootstrap5(app)
 
+#secret key
+app.config['SECRET_KEY'] = 'keyfob'
+
 # Set app context
 def db_connection():
     cursor = sqlite3.connect('database.db')
@@ -35,7 +38,7 @@ def login():
         password = request.form['password']
 
         # Check credentials
-        data = cursor.execute('SELECT * from Staff WHERE username = %s AND password =%s').fetchall()
+        data = cursor.execute('SELECT * from StaffLogin WHERE username = ? AND password = ?', (username, password)).fetchone()
         if data:
             session['loggedin'] = True
             session['id'] = data['staffID']
