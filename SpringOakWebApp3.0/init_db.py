@@ -7,9 +7,9 @@ with open('springoaks.sql') as f:
 
 cur = connection.cursor()
 
-cur.execute("INSERT INTO StaffLogin (staffID, username, password) VALUES (?, ?, ?)", (1234, 'admin', 'password'))
+cur.execute("INSERT INTO Staff_Login (staffID, username, password) VALUES (?, ?, ?)", (1234, 'admin', 'password'))
 
-cur.execute("INSERT INTO StaffLogin (staffID, username, password) VALUES (?, ?, ?)", (4321, 'marsh103', 'password'))
+cur.execute("INSERT INTO Staff_Login (staffID, username, password) VALUES (?, ?, ?)", (4321, 'marsh103', 'password'))
 
 cur.execute("INSERT INTO Residents (residentID, residentFirstName, residentLastName, enterDate, roomNumber, "
             "birthdate, insurance, emergencyContactFirstName, emergencyContactLastName, emergencyContactPhoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

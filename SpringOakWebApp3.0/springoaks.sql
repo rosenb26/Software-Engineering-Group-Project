@@ -14,6 +14,7 @@ CREATE TABLE Residents (
 CREATE TABLE Visitors (
 	visitorID INTEGER PRIMARY KEY AUTOINCREMENT,
 	email CHAR(20) NOT NULL,
+	phoneNumber CHAR(20),
 	dateRegistered DATE NOT NULL,
 	visitorFirstName CHAR(20) NOT NULL,
 	visitorLastName CHAR(20) NOT NULL,
@@ -26,9 +27,10 @@ CREATE TABLE Visitors (
 CREATE TABLE VisitorList (
     visitorID INTEGER PRIMARY KEY NOT NULL,
     dateVisit DATE NOT NULL,
+    email CHAR(20),
 	visitorFirstName CHAR(20) NOT NULL,
 	visitorLastName CHAR(20) NOT NULL,
-	checkInTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	checkInTime CHAR(10) NOT NULL,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
 	residentID INTEGER NOT NULL,
@@ -36,7 +38,7 @@ CREATE TABLE VisitorList (
 	FOREIGN KEY(residentID) REFERENCES Residents(residentID)
 );
 
-CREATE TABLE StaffLogin (
+CREATE TABLE Staff_Login (
 	staffID INTEGER NOT NULL PRIMARY KEY,
 	username CHAR(20) NOT NULL,
 	password CHAR(20) NOT NULL

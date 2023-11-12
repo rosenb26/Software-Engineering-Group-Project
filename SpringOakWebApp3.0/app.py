@@ -1,6 +1,6 @@
 import sqlite3
 import time
-import datetime
+from datetime import datetime
 from flask_bootstrap import Bootstrap5
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import re
@@ -19,17 +19,6 @@ def db_connection():
     connection.row_factory = sqlite3.Row
     return connection
 
-# Dummy staff username and password (replace this with a secure authentication mechanism)
-# STAFF_USERNAME = "admin"
-# STAFF_PASSWORD = "password"
-
-# In-memory list to store registered visitors
-registered_visitors = []
-
-# In-memory list to store checked-in visitors
-checked_in_visitors = []
-
-
 @app.route('/', methods=['GET', 'POST'])
 def login():
     cursor = db_connection()
@@ -38,7 +27,7 @@ def login():
         password = request.form['password']
 
         # Check credentials
-        data = cursor.execute('SELECT * from StaffLogin WHERE username = ? AND password = ?', (username, password)).fetchone()
+        data = cursor.execute('SELECT * FROM Staff_Login WHERE username = ? AND password = ?', (username, password)).fetchone()
         if data:
             session['loggedin'] = True
             session['id'] = data['staffID']
@@ -79,8 +68,7 @@ def visitors():
     else:
         filtered_visitors = visitors_data
 
-    return render_template('visitors.html', visitors=filtered_visitors, checked_in_visitors=checked_in_visitors,
-                           type=visitor_type, checked_in_count=checked_in_count, checked_out_count=checked_out_count)
+    return render_template('visitors.html', visitors=filtered_visitors, type=visitor_type, checked_in_count=checked_in_count, checked_out_count=checked_out_count)
 
 
 @app.route('/registration-success')
@@ -124,9 +112,9 @@ def register():
         with db_connection() as connection:
             cursor = connection.cursor()
             cursor.execute(
-                "INSERT INTO Visitors (dateRegistered, email, visitorFirstName, visitorLastName, residentFirstName, residentLastName, residentID)"
-                "VALUES (?,?,?,?,?,?,?)",
-                (date, f'{email}', f'{firstname}', f'{lastname}', f'{residentname}', f'{residentname}', resid))
+                "INSERT INTO Visitors (dateRegistered, email, phoneNumber, visitorFirstName, visitorLastName, residentFirstName, residentLastName, residentID)"
+                "VALUES (?,?,?,?,?,?,?,?)",
+                (date, f'{email}', f'{phonenumber}', f'{firstname}', f'{lastname}', f'{residentname}', f'{residentname}', resid))
 
             connection.commit()
 
@@ -138,6 +126,12 @@ def register():
 @app.route('/visitor-dashboard', methods=['GET', 'POST'])
 def visitor_dashboard():
     cursor = db_connection()
+
+    # configure present date and time
+    current_datetime = datetime.now()
+    current_date = current_datetime.strftime('%Y-%m-%d')
+    current_time = current_datetime.strftime('%H:%M:%S')
+
     if request.method == 'POST':
         # User needs to register
         if 'register' in request.form:
@@ -152,15 +146,15 @@ def visitor_dashboard():
             visitor_data = cursor.execute("SELECT * FROM Visitors WHERE email = ?", (visitor_email,)).fetchone()
 
             # Check if the visitor exists
-            if not visitor_data or visitor_data['checkOutTime']:
+            if not visitor_data:
                 print("Visitor not found or already checked in.")
                 return "Visitor not found or already checked in."
 
             # Insert new entry into Visitor List table
             with db_connection() as connection:
                 cursor = connection.cursor()
-                cursor.execute("INSERT INTO VisitorList (dateRegistered, visitorFirstName, visitorLastName, residentFirstName, residentLastName, residentID, checkInTime) VALUES (DATE('now'),?,?,?,?,?, CURRENT_TIMESTAMP)",
-                               (visitor_data['visitorFirstName'], visitor_data['visitorLastName'], visitor_data['residentFirstName'], visitor_data['residentLastName'], visitor_data['residentID']))
+                cursor.execute("INSERT INTO VisitorList (dateVisit, visitorID, email, visitorFirstName, visitorLastName, residentFirstName, residentLastName, residentID, checkInTime) VALUES (?,?,?,?,?,?,?,?,?)",
+                               (f'{current_date}', visitor_data['visitorID'], visitor_data['email'], visitor_data['visitorFirstName'], visitor_data['visitorLastName'], visitor_data['residentFirstName'], visitor_data['residentLastName'], visitor_data['residentID'], f'{current_time}'))
                 connection.commit()
 
             print("Check-in successful!")
@@ -180,8 +174,12 @@ def visitor_dashboard():
                 return "Visitor not found or not checked in."
 
             # Execute the update query to set the checkOutTime
-            data = cursor.execute("UPDATE Visitors SET checkOutTime = CURRENT_TIMESTAMP WHERE email = ? AND checkOutTime IS NULL",(visitor_email,))
-            cursor.commit()
+            with db_connection() as connection:
+                cursor = connection.cursor()
+                data = cursor.execute(
+                    "UPDATE VisitorList SET checkOutTime = current_time WHERE email = ? AND checkOutTime IS NULL",
+                    (visitor_email,))
+                connection.commit()
 
             # Check that a valid entry was found
             if data:
