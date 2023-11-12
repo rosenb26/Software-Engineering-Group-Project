@@ -13,7 +13,19 @@ CREATE TABLE Residents (
 
 CREATE TABLE Visitors (
 	visitorID INTEGER PRIMARY KEY AUTOINCREMENT,
-	dateVisit DATE NOT NULL,
+	email CHAR(20) NOT NULL,
+	dateRegistered DATE NOT NULL,
+	visitorFirstName CHAR(20) NOT NULL,
+	visitorLastName CHAR(20) NOT NULL,
+	residentFirstName CHAR(20) NOT NULL,
+	residentLastName CHAR(20) NOT NULL,
+	residentID INTEGER NOT NULL,
+	FOREIGN KEY(residentID) REFERENCES Residents(residentID)
+);
+
+CREATE TABLE VisitorList (
+    visitorID INTEGER PRIMARY KEY NOT NULL,
+    dateVisit DATE NOT NULL,
 	visitorFirstName CHAR(20) NOT NULL,
 	visitorLastName CHAR(20) NOT NULL,
 	checkInTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
