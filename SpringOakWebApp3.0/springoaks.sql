@@ -49,11 +49,13 @@ CREATE TABLE Travel_Request (
 	travelRequestID INTEGER PRIMARY KEY AUTOINCREMENT,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
+	residentID INTEGER NOT NULL,
 	submissionDate DATE NOT NULL,
 	dateRequested DATE NOT NULL,
 	locationRequested TEXT NOT NULL,
 	notes TEXT,
-	status CHAR(20) NOT NULL
+	status CHAR(20) NOT NULL,
+	FOREIGN KEY(residentID) REFERENCES Residents(residentID)
 );
 
 CREATE TABLE Maintenance_Request (
@@ -65,6 +67,7 @@ CREATE TABLE Maintenance_Request (
 	workType CHAR(20) NOT NULL,
 	residentID INTEGER NOT NULL,
 	dateCompleted DATE,
+	status CHAR(20) NOT NULL,
 	notes TEXT,
 	FOREIGN KEY(residentID) REFERENCES Residents(residentID)
 );
@@ -77,8 +80,10 @@ CREATE TABLE Doctor_Request (
 	roomNumber INTEGER NOT NULL,
 	visitType CHAR(20) NOT NULL,
 	residentID INTEGER NOT NULL,
+	status CHAR(20) NOT NULL,
 	notes TEXT,
-	dateSeen DATE
+	dateSeen DATE,
+	FOREIGN KEY(residentID) REFERENCES Residents(residentID)
 );
 
 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Maintenance Request</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Maintenance Request</h1>
+        <p class="mb-4">Select work category:</p>
+
+        <form action="/submit-maintenance-request" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="work_type" class="form-label">Work Category:</label>
+                <select id="work_type" name="work_type" class="form-select form-select-lg mb-3" required>
+                    <option value="electrical">Electrical</option>
+                    <option value="door_lock">Door/Lock</option>
+                    <option value="heating_ventilation">Heating/Ventilation</option>
+                    <option value="plumbing">Plumbing</option>
+                    <option value="carpentry">Carpentry</option>
+                    <option value="pest_control">Pest Control</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="notes" class="form-label">Important Notes:</label>
+                <textarea id="notes" name="notes" class="form-control" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

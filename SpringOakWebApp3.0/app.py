@@ -224,11 +224,105 @@ def resident_homepage():
         # Redirect to the resident login page if the resident isn't logged in
         return redirect(url_for('resident_login'))
 
-@app.route('/resident-requests')
+@app.route('/resident-requests', methods=['GET', 'POST'])
 def resident_requests():
-    return render_template('resident_request.html')
+    if request.method == 'POST':
+        # Check the request type when button is selected
+        if 'travel_requests' in request.form:
+            return redirect(url_for('travel_requests'))
+        if 'maintenance_requests' in request.form:
+            return redirect(url_for('maintenance_requests'))
+        if 'doctor_requests' in request.form:
+            return redirect(url_for('doctor_requests'))
 
+    return render_template('resident_requests.html')
 
+@app.route('/doctor-requests', methods=['GET', 'POST'])
+def doctor_request():
+    if request.method == 'POST':
+        # Get residentID from session information
+        resident_id = session.get('resident_id')
+
+        # Get form data
+        visit_type = request.form['visit_type']
+        notes = request.form['notes']
+        status = 'Pending'
+
+        # Retrieve resident data
+        cursor = db_connection()
+        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id)).fetchone()
+
+        with db_connection as connection:
+            cursor = connection.cursor()
+            cursor.execute( "INSERT INTO Doctor_Request (residentFirstName, residentLastName, submissionDate, roomNumber, visitType, residentID, notes, status) "
+                "VALUES (?, ?, date('now'), ?, ?, ?, ?, ?)",
+                (resident_data['residentFirstName'], resident_data['residentLastName'], resident_data['roomNumber'], visit_type, resident_id, notes, status)
+            )
+            connection.commit()
+        return redirect(url_for('resident_homepage'))
+
+    return render_template('doctor_requests.html')
+
+@app.route('/maintenance-requests', methods=['GET', 'POST'])
+def maintenance_requests():
+    if request.method == 'POST':
+        # Get residentID from session information
+        resident_id = session.get('resident_id')
+
+        # Get form data
+        work_type = request.form['work_type']
+        notes = request.form['notes']
+        status = 'Pending'
+
+        # Retrieve resident data
+        cursor = db_connection()
+        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id)).fetchone()
+
+        # Insert data into the Maintenance_Request table
+        with db_connection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                "INSERT INTO Maintenance_Request (residentFirstName, residentLastName, submissionDate, roomNumber, workType, residentID, notes, status) "
+                "VALUES (?, ?, date('now'), ?, ?, ?, ?, ?)",
+                (resident_data['residentFirstName'], resident_data['residentLastName'], resident_data['roomNumber'], work_type, resident_id, notes, status)
+            )
+            connection.commit()
+
+        return redirect(url_for('resident_homepage'))
+
+        # Render the maintenance request page
+    return render_template('maintenance_requests.html')
+
+@app.route('/travel-requests', methods=['GET', 'POST'])
+def travel_requests():
+    if request.method == 'POST':
+        # Get residentID from session information
+        resident_id = session.get('resident_id')
+
+        # Retrieve resident data
+        cursor = db_connection()
+        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id)).fetchone()
+
+        # Get form data
+        location_requested = request.form['location_requested']
+        date_requested = request.form['date_requested']
+        notes = request.form['notes']
+        status = 'Pending'
+
+        # Insert data into the Travel_Request table
+        with db_connection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                "INSERT INTO Travel_Request (residentID, residentFirstName, residentLastName, submissionDate, dateRequested, locationRequested, notes, status) "
+                "VALUES (?, ?, date('now'), ?, ?, ?, ?)",
+                (resident_id, resident_data['residentFirstName'], resident_data['residentLastName'], date_requested, location_requested, notes, status)
+            )
+            connection.commit()
+
+        return redirect(url_for('resident_homepage'))
+
+        # Render the travel request page
+    return render_template('travel_requests.html')
 
 @app.route('/logout', methods=['POST'])
 def logout():

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Travel Request</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Travel Request</h1>
+        <p class="mb-4">Answer both questions before submitting.</p>
+
+        <form action="/submit-travel-request" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="location_requested" class="form-label">What location are you requesting travel to?</label>
+                <input type="text" id="location_requested" name="location_requested" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="date_requested" class="form-label">When do you plan on traveling?</label>
+                <input type="date" id="date_requested" name="date_requested" class="form-control" required>
+                <small class="text-muted">Requests should be made a minimum of 3 days in advance.</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="notes" class="form-label">Additional Notes:</label>
+                <textarea id="notes" name="notes" class="form-control" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
