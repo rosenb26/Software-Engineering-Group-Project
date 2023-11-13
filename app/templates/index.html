@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+ <h1 class="p-2 bg-success text-white">Staff Login</h1>
+    <img src="{{ url_for('static', filename='styles/logo.jpg') }}" class="rounded mx-auto d-block" alt="logo">
+    <div class="container">
+        <form action="/" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="username" class="form-label fs-5">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label fs-5">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success btn-lg">Login</button>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+{% endblock %}

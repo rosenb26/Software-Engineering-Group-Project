@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    <div class="d-flex flex-wrap">
+        <a href="{{ url_for('visitors') }}" class="m-2">
+            <button class="btn btn-primary">
+                Visitors
+            </button>
+        </a>
+        <a href="{{ url_for('residents') }}" class="m-2">
+            <button class="btn btn-primary">Residents</button>
+        </a>
+        <a href="{{ url_for('addResident') }}" class="m-2">
+            <button class="btn btn-primary">Add Resident</button>
+        </a>
+        <a href="{{ url_for('requests') }}" class="m-2">
+            <button class="btn btn-primary">Requests</button>
+        </a>
+        <a href="{{ url_for('logout') }}" class="m-2">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
