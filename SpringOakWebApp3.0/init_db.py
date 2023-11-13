@@ -12,8 +12,8 @@ cur.execute("INSERT INTO Staff_Login (staffID, username, password) VALUES (?, ?,
 cur.execute("INSERT INTO Staff_Login (staffID, username, password) VALUES (?, ?, ?)", (4321, 'marsh103', 'password'))
 
 cur.execute("INSERT INTO Residents (residentID, residentFirstName, residentLastName, enterDate, roomNumber, "
-            "birthdate, insurance, emergencyContactFirstName, emergencyContactLastName, emergencyContactPhoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (111, "Alyssia", "Marshall", 11/11/2023, 101, 3/1/2001, "Horizon", "Mom", "Marshall", "6091234567"))
+            "birthdate, insurance, emergencyContactFullName, emergencyContactPhoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (111, "Alyssia", "Marshall", 11/11/2023, 101, 3/1/2001, "Horizon", "Mom", "6091234567"))
 
 connection.commit()
 connection.close()

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Resident Requests</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Resident Requests</h1>
+        <ul class="nav nav-tabs mt-4">
+            <li class="nav-item">
+                <a class="nav-link active" id="open-requests-tab" data-bs-toggle="tab" href="#open-requests">Open Requests</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="closed-requests-tab" data-bs-toggle="tab" href="#closed-requests">Closed Requests</a>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <!-- Open Requests Tab -->
+            <div class="tab-pane fade show active" id="open-requests">
+                <!-- Table for Open Requests -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Request Type</th>
+                            <th>Entry Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Populate this table with data from open requests -->
+                        <!-- Use Flask template syntax to loop through the data -->
+                        {% for request in open_requests %}
+                            <tr>
+                                <td>{{ request.id }}</td>
+                                <td>{{ request.type }}</td>
+                                <td>{{ request.entry_date }}</td>
+                                <td>{{ request.status }}</td>
+                                <td>{{ request.notes }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Closed Requests Tab -->
+            <div class="tab-pane fade" id="closed-requests">
+                <!-- Table for Closed Requests -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Request Type</th>
+                            <th>Entry Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Populate this table with data from closed requests -->
+                        <!-- Use Flask template syntax to loop through the data -->
+                        {% for request in closed_requests %}
+                            <tr>
+                                <td>{{ request.id }}</td>
+                                <td>{{ request.type }}</td>
+                                <td>{{ request.entry_date }}</td>
+                                <td>{{ request.status }}</td>
+                                <td>{{ request.notes }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

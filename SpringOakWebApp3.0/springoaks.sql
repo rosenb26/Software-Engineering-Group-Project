@@ -6,8 +6,7 @@ CREATE TABLE Residents (
 	roomNumber INTEGER NOT NULL,
 	birthdate DATE NOT NULL,
 	insurance TEXT NOT NULL,
-	emergencyContactFirstName CHAR(20) NOT NULL,
-	emergencyContactLastName CHAR(20) NOT NULL,
+	emergencyContactFullName CHAR(50) NOT NULL,
 	emergencyContactPhoneNumber CHAR(10) NOT NULL
 );
 
@@ -46,12 +45,13 @@ CREATE TABLE Staff_Login (
 );
 
 CREATE TABLE Travel_Request (
-	travelRequestID INTEGER PRIMARY KEY AUTOINCREMENT,
+	orderID INTEGER PRIMARY KEY AUTOINCREMENT,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
 	residentID INTEGER NOT NULL,
 	submissionDate DATE NOT NULL,
 	dateRequested DATE NOT NULL,
+	dateCompleted DATE,
 	locationRequested TEXT NOT NULL,
 	notes TEXT,
 	status CHAR(20) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE Travel_Request (
 );
 
 CREATE TABLE Maintenance_Request (
-	workID INTEGER PRIMARY KEY AUTOINCREMENT,
+	orderID INTEGER PRIMARY KEY AUTOINCREMENT,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
 	submissionDate DATE NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE Maintenance_Request (
 );
 
 CREATE TABLE Doctor_Request (
-	doctorRequestID INTEGER PRIMARY KEY AUTOINCREMENT,
+	orderID INTEGER PRIMARY KEY AUTOINCREMENT,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
 	submissionDate DATE NOT NULL,

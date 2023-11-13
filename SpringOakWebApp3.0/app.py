@@ -15,9 +15,16 @@ app.config['SECRET_KEY'] = 'keyfob'
 
 # Set app context
 def db_connection():
-    connection = sqlite3.connect('database.db')
-    connection.row_factory = sqlite3.Row
-    return connection
+    try:
+        connection = (sqlite3.
+                      connect('database.db'))
+        connection.row_factory = sqlite3.Row
+        return connection
+    except sqlite3.Error as e:
+        print("Database connection error:", e)
+        # Handle the error as needed
+        raise e
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -177,8 +184,8 @@ def visitor_dashboard():
             with db_connection() as connection:
                 cursor = connection.cursor()
                 data = cursor.execute(
-                    "UPDATE VisitorList SET checkOutTime = current_time WHERE email = ? AND checkOutTime IS NULL",
-                    (visitor_email,))
+                    "UPDATE VisitorList SET checkOutTime = ? WHERE email = ? AND checkOutTime IS NULL",
+                    (current_time, visitor_email,))
                 connection.commit()
 
             # Check that a valid entry was found
@@ -243,6 +250,11 @@ def doctor_request():
         # Get residentID from session information
         resident_id = session.get('resident_id')
 
+        # configure present date and time
+        current_datetime = datetime.now()
+        current_date = current_datetime.strftime('%Y-%m-%d')
+        current_time = current_datetime.strftime('%H:%M:%S')
+
         # Get form data
         visit_type = request.form['visit_type']
         notes = request.form['notes']
@@ -250,16 +262,18 @@ def doctor_request():
 
         # Retrieve resident data
         cursor = db_connection()
-        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id)).fetchone()
+        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id,)).fetchone()
 
-        with db_connection as connection:
+        with db_connection() as connection:
             cursor = connection.cursor()
             cursor.execute( "INSERT INTO Doctor_Request (residentFirstName, residentLastName, submissionDate, roomNumber, visitType, residentID, notes, status) "
                 "VALUES (?, ?, date('now'), ?, ?, ?, ?, ?)",
                 (resident_data['residentFirstName'], resident_data['residentLastName'], resident_data['roomNumber'], visit_type, resident_id, notes, status)
             )
             connection.commit()
-        return redirect(url_for('resident_homepage'))
+
+        if resident_data:
+            return redirect(url_for('resident_homepage'))
 
     return render_template('doctor_requests.html')
 
@@ -269,6 +283,11 @@ def maintenance_requests():
         # Get residentID from session information
         resident_id = session.get('resident_id')
 
+        # configure present date and time
+        current_datetime = datetime.now()
+        current_date = current_datetime.strftime('%Y-%m-%d')
+        current_time = current_datetime.strftime('%H:%M:%S')
+
         # Get form data
         work_type = request.form['work_type']
         notes = request.form['notes']
@@ -276,19 +295,20 @@ def maintenance_requests():
 
         # Retrieve resident data
         cursor = db_connection()
-        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id)).fetchone()
+        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id,)).fetchone()
 
         # Insert data into the Maintenance_Request table
         with db_connection() as connection:
             cursor = connection.cursor()
             cursor.execute(
                 "INSERT INTO Maintenance_Request (residentFirstName, residentLastName, submissionDate, roomNumber, workType, residentID, notes, status) "
-                "VALUES (?, ?, date('now'), ?, ?, ?, ?, ?)",
-                (resident_data['residentFirstName'], resident_data['residentLastName'], resident_data['roomNumber'], work_type, resident_id, notes, status)
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (resident_data['residentFirstName'], resident_data['residentLastName'], f'{current_date}', resident_data['roomNumber'], work_type, resident_id, notes, status)
             )
             connection.commit()
 
-        return redirect(url_for('resident_homepage'))
+        if resident_data:
+            return redirect(url_for('resident_homepage'))
 
         # Render the maintenance request page
     return render_template('maintenance_requests.html')
@@ -301,7 +321,12 @@ def travel_requests():
 
         # Retrieve resident data
         cursor = db_connection()
-        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id)).fetchone()
+        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentID = ?', (resident_id,)).fetchone()
+
+        # configure present date and time
+        current_datetime = datetime.now()
+        current_date = current_datetime.strftime('%Y-%m-%d')
+        current_time = current_datetime.strftime('%H:%M:%S')
 
         # Get form data
         location_requested = request.form['location_requested']
@@ -314,15 +339,71 @@ def travel_requests():
             cursor = connection.cursor()
             cursor.execute(
                 "INSERT INTO Travel_Request (residentID, residentFirstName, residentLastName, submissionDate, dateRequested, locationRequested, notes, status) "
-                "VALUES (?, ?, date('now'), ?, ?, ?, ?)",
-                (resident_id, resident_data['residentFirstName'], resident_data['residentLastName'], date_requested, location_requested, notes, status)
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (resident_id, resident_data['residentFirstName'], resident_data['residentLastName'], f'{current_date}',date_requested, location_requested, notes, status)
             )
             connection.commit()
 
-        return redirect(url_for('resident_homepage'))
+        if resident_data:
+            return redirect(url_for('resident_homepage'))
 
         # Render the travel request page
     return render_template('travel_requests.html')
+
+@app.route('/residents-viewrequests')
+def residents_viewrequests():
+    # Get residentID from session information
+    resident_id = session.get('resident_id')
+
+    # Get requests from database
+    open_requests = get_open_requests(resident_id)
+    closed_requests = get_closed_requests(resident_id)
+    return render_template('residents_viewrequests.html', open_requests=open_requests, closed_requests=closed_requests)
+
+def get_open_requests(resident_id):
+    with db_connection() as connection:
+        cursor = connection.cursor()
+        # Fetch open travel request entries
+        cursor.execute("SELECT orderID as id, 'Travel' as type, submissionDate as entry_date, status, notes FROM Travel_Request "
+                                              "WHERE dateCompleted IS NULL AND residentID = ?", (resident_id,))
+        open_travel_requests = cursor.fetchall()
+
+        # Fetch open maintenance request entries
+        cursor.execute(
+            "SELECT orderID as id, 'Maintenance' as type, submissionDate as entry_date, status, notes FROM Maintenance_Request "
+            "WHERE dateCompleted IS NULL AND residentID = ?", (resident_id,))
+        open_maintenance_requests = cursor.fetchall()
+
+        # Fetch doctor requests entries
+        cursor.execute(
+            "SELECT orderID as id, 'Doctor' as type, submissionDate as entry_date, status, notes FROM Doctor_Request "
+            "WHERE dateSeen IS NULL AND residentID = ?", (resident_id,))
+        open_doctor_requests = cursor.fetchall()
+
+        return open_travel_requests + open_maintenance_requests + open_doctor_requests
+
+def get_closed_requests(resident_id):
+    with db_connection() as connection:
+        cursor = connection.cursor()
+        # Example for Travel Requests
+        cursor.execute(
+            "SELECT orderID as id, 'Travel' as type, submissionDate as entry_date, status, notes FROM Travel_Request "
+            "WHERE dateCompleted IS NOT NULL AND residentID = ?", (resident_id,))
+        closed_travel_requests = cursor.fetchall()
+
+        # Example for Maintenance Requests
+        cursor.execute(
+            "SELECT orderID as id, 'Maintenance' as type, submissionDate as entry_date, status, notes FROM Maintenance_Request "
+            "WHERE dateCompleted IS NOT NULL AND residentID = ?", (resident_id,))
+        closed_maintenance_requests = cursor.fetchall()
+
+        # Example for Doctor Requests
+        closed_doctor_requests = cursor.execute(
+            "SELECT orderID as id, 'Doctor' as type, submissionDate as entry_date, status, notes FROM Doctor_Request "
+            "WHERE dateSeen IS NOT NULL AND residentID = ?", (resident_id,))
+        closed_doctor_requests = cursor.fetchall()
+
+    return closed_travel_requests + closed_maintenance_requests + closed_doctor_requests
 
 @app.route('/logout', methods=['POST'])
 def logout():

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resident Database</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <h1>Resident Database</h1>
+
+    <form method="POST" action="{{ url_for('resident_database') }}">
+        <div>
+            <label for="search_resident_id">Search by Resident ID:</label>
+            <input type="text" id="search_resident_id" name="search_resident_id">
+        </div>
+
+        <div>
+            <label for="search_room_number">Search by Room Number:</label>
+            <input type="text" id="search_room_number" name="search_room_number">
+        </div>
+
+        <button type="submit">Search</button>
+    </form>
+
+    {% if resident_data %}
+        <h2>Resident Profile</h2>
+        <ul>
+            <li><strong>First Name:</strong> {{ resident_data['residentFirstName'] }}</li>
+            <li><strong>Last Name:</strong> {{ resident_data['residentLastName'] }}</li>
+            <li><strong>Birth Date:</strong> {{ resident_data['birthdate'] }}</li>
+            <li><strong>Room Number:</strong> {{ resident_data['roomNumber'] }}</li>
+            <li><strong>Entry Date:</strong> {{ resident_data['enterDate'] }}</li>
+            <li><strong>Insurance:</strong> {{ resident_data['insurance'] }}</li>
+        </ul>
+
+        <h2>Emergency Contact</h2>
+        <ul>
+            <li><strong>Full Name:</strong> {{ resident_data['emergencyContactFullName'] }}</li>
+            <li><strong>Phone Number:</strong> {{ resident_data['emergencyContactPhoneNumber'] }}</li>
+        </ul>
+
+        <h2>Visitor List</h2>
+        <ul>
+            {% for visitor in visitor_list %}
+                <li><strong>Full Name:</strong> {{ visitor['visitorFirstName'] }} {{ visitor['visitorLastName'] }}</li>
+                <li><strong>Phone Number:</strong> {{ visitor['phoneNumber'] }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>{{ error_message }}</p>
+
+    <a href="{{ url_for('register') }}"><button>Register New Resident</button></a>
+</body>
+</html>

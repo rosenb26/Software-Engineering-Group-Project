@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Travel Request</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
         <h1 class="mt-5">Travel Request</h1>
         <p class="mb-4">Answer both questions before submitting.</p>
 
-        <form action="/submit-travel-request" method="post" class="mt-4">
+        <form action="/travel-requests" method="post" class="mt-4">
             <div class="mb-3">
                 <label for="location_requested" class="form-label">What location are you requesting travel to?</label>
                 <input type="text" id="location_requested" name="location_requested" class="form-control" required>
