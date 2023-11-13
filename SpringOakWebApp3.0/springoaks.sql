@@ -28,6 +28,7 @@ CREATE TABLE VisitorList (
     visitorID INTEGER PRIMARY KEY NOT NULL,
     dateVisit DATE NOT NULL,
     email CHAR(20),
+    phoneNumber CHAR(20),
 	visitorFirstName CHAR(20) NOT NULL,
 	visitorLastName CHAR(20) NOT NULL,
 	checkInTime CHAR(10) NOT NULL,
@@ -51,6 +52,7 @@ CREATE TABLE Travel_Request (
 	submissionDate DATE NOT NULL,
 	dateRequested DATE NOT NULL,
 	locationRequested TEXT NOT NULL,
+	notes TEXT,
 	status CHAR(20) NOT NULL
 );
 
@@ -63,6 +65,7 @@ CREATE TABLE Maintenance_Request (
 	workType CHAR(20) NOT NULL,
 	residentID INTEGER NOT NULL,
 	dateCompleted DATE,
+	notes TEXT,
 	FOREIGN KEY(residentID) REFERENCES Residents(residentID)
 );
 
@@ -74,6 +77,7 @@ CREATE TABLE Doctor_Request (
 	roomNumber INTEGER NOT NULL,
 	visitType CHAR(20) NOT NULL,
 	residentID INTEGER NOT NULL,
+	notes TEXT,
 	dateSeen DATE
 );
 

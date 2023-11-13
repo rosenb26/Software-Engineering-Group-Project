@@ -153,8 +153,8 @@ def visitor_dashboard():
             # Insert new entry into Visitor List table
             with db_connection() as connection:
                 cursor = connection.cursor()
-                cursor.execute("INSERT INTO VisitorList (dateVisit, visitorID, email, visitorFirstName, visitorLastName, residentFirstName, residentLastName, residentID, checkInTime) VALUES (?,?,?,?,?,?,?,?,?)",
-                               (f'{current_date}', visitor_data['visitorID'], visitor_data['email'], visitor_data['visitorFirstName'], visitor_data['visitorLastName'], visitor_data['residentFirstName'], visitor_data['residentLastName'], visitor_data['residentID'], f'{current_time}'))
+                cursor.execute("INSERT INTO VisitorList (dateVisit, phoneNumber, visitorID, email, visitorFirstName, visitorLastName, residentFirstName, residentLastName, residentID, checkInTime) VALUES (?,?,?,?,?,?,?,?,?, ?)",
+                               (f'{current_date}', visitor_data['phoneNumber'], visitor_data['visitorID'], visitor_data['email'], visitor_data['visitorFirstName'], visitor_data['visitorLastName'], visitor_data['residentFirstName'], visitor_data['residentLastName'], visitor_data['residentID'], f'{current_time}'))
                 connection.commit()
 
             print("Check-in successful!")
@@ -166,10 +166,10 @@ def visitor_dashboard():
             print(f"Check-out request for email: {visitor_email}")
 
             # Retrieve visitor information from the Visitors table
-            visitor_data = cursor.execute("SELECT * FROM Visitors WHERE email = ?", (visitor_email,)).fetchone()
+            visitor_data = cursor.execute("SELECT * FROM VisitorList WHERE email = ?", (visitor_email,)).fetchone()
 
             # Check if the visitor exists
-            if not visitor_data or visitor_data['checkInTime']:
+            if not visitor_data['checkInTime']:
                 print("Visitor not found or not checked in.")
                 return "Visitor not found or not checked in."
 
@@ -190,6 +190,44 @@ def visitor_dashboard():
                 return "Visitor not found or not checked in."
 
     return render_template('visitor_dashboard.html')
+
+# Resident dashboard login
+@app.route('/resident-login', methods=['GET', 'POST'])
+def resident_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        room_number = request.form['room_number']
+
+        # Check that the resident exists
+        cursor = db_connection()
+        resident_data = cursor.execute('SELECT * FROM Residents WHERE residentFirstName = ? AND roomNumber = ?',
+                                       (username, room_number)).fetchone()
+
+        if resident_data:
+            session['resident_loggedin'] = True
+            session['resident_id'] = resident_data['residentID']
+            session['resident_username'] = resident_data['residentFirstName']
+            # Redirect to the resident dashboard
+            return redirect(url_for('resident_homepage'))
+
+        else:
+            flash('Invalid resident credentials. Please try again.')
+
+    return render_template('resident_login.html')
+
+@app.route('/resident-homepage')
+def resident_homepage():
+    if 'resident_loggedin' in session and session['resident_loggedin']:
+        # Render the resident dashboard template
+        return render_template('resident_homepage.html')
+    else:
+        # Redirect to the resident login page if the resident isn't logged in
+        return redirect(url_for('resident_login'))
+
+@app.route('/resident-requests')
+def resident_requests():
+    return render_template('resident_request.html')
+
 
 
 @app.route('/logout', methods=['POST'])
