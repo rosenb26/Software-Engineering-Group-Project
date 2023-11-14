@@ -447,7 +447,7 @@ def resident_database():
                 error_message = "Resident not found."
                 return render_template('resident_database.html', error_message=error_message)
 
-        return render_template('resident_database.html')
+    return render_template('resident_database.html')
 
 @app.route('/logout', methods=['POST'])
 def logout():
