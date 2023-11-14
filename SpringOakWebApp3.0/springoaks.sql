@@ -45,13 +45,13 @@ CREATE TABLE Staff_Login (
 );
 
 CREATE TABLE Travel_Request (
-	orderID INTEGER PRIMARY KEY AUTOINCREMENT,
+	travelRequestID INTEGER PRIMARY KEY AUTOINCREMENT,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
 	residentID INTEGER NOT NULL,
 	submissionDate DATE NOT NULL,
 	dateRequested DATE NOT NULL,
-	dateCompleted DATE,
+	dateTraveled DATE,
 	locationRequested TEXT NOT NULL,
 	notes TEXT,
 	status CHAR(20) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE Travel_Request (
 );
 
 CREATE TABLE Maintenance_Request (
-	orderID INTEGER PRIMARY KEY AUTOINCREMENT,
+	workID INTEGER PRIMARY KEY AUTOINCREMENT,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
 	submissionDate DATE NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE Maintenance_Request (
 );
 
 CREATE TABLE Doctor_Request (
-	orderID INTEGER PRIMARY KEY AUTOINCREMENT,
+	doctorRequestID INTEGER PRIMARY KEY AUTOINCREMENT,
 	residentFirstName CHAR(20) NOT NULL,
 	residentLastName CHAR(20) NOT NULL,
 	submissionDate DATE NOT NULL,

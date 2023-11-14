@@ -364,19 +364,19 @@ def get_open_requests(resident_id):
     with db_connection() as connection:
         cursor = connection.cursor()
         # Fetch open travel request entries
-        cursor.execute("SELECT orderID as id, 'Travel' as type, submissionDate as entry_date, status, notes FROM Travel_Request "
-                                              "WHERE dateCompleted IS NULL AND residentID = ?", (resident_id,))
+        cursor.execute("SELECT travelRequestID as id, 'Travel' as type, submissionDate as entry_date, status, notes FROM Travel_Request "
+                                              "WHERE dateTraveled IS NULL AND residentID = ?", (resident_id,))
         open_travel_requests = cursor.fetchall()
 
         # Fetch open maintenance request entries
         cursor.execute(
-            "SELECT orderID as id, 'Maintenance' as type, submissionDate as entry_date, status, notes FROM Maintenance_Request "
+            "SELECT workID as id, 'Maintenance' as type, submissionDate as entry_date, status, notes FROM Maintenance_Request "
             "WHERE dateCompleted IS NULL AND residentID = ?", (resident_id,))
         open_maintenance_requests = cursor.fetchall()
 
         # Fetch doctor requests entries
         cursor.execute(
-            "SELECT orderID as id, 'Doctor' as type, submissionDate as entry_date, status, notes FROM Doctor_Request "
+            "SELECT doctorRequestID as id, 'Doctor' as type, submissionDate as entry_date, status, notes FROM Doctor_Request "
             "WHERE dateSeen IS NULL AND residentID = ?", (resident_id,))
         open_doctor_requests = cursor.fetchall()
 
@@ -387,23 +387,67 @@ def get_closed_requests(resident_id):
         cursor = connection.cursor()
         # Example for Travel Requests
         cursor.execute(
-            "SELECT orderID as id, 'Travel' as type, submissionDate as entry_date, status, notes FROM Travel_Request "
-            "WHERE dateCompleted IS NOT NULL AND residentID = ?", (resident_id,))
+            "SELECT travelRequestID as id, 'Travel' as type, submissionDate as entry_date, status, notes FROM Travel_Request "
+            "WHERE dateTraveled IS NOT NULL AND residentID = ?", (resident_id,))
         closed_travel_requests = cursor.fetchall()
 
         # Example for Maintenance Requests
         cursor.execute(
-            "SELECT orderID as id, 'Maintenance' as type, submissionDate as entry_date, status, notes FROM Maintenance_Request "
+            "SELECT workID as id, 'Maintenance' as type, submissionDate as entry_date, status, notes FROM Maintenance_Request "
             "WHERE dateCompleted IS NOT NULL AND residentID = ?", (resident_id,))
         closed_maintenance_requests = cursor.fetchall()
 
         # Example for Doctor Requests
         closed_doctor_requests = cursor.execute(
-            "SELECT orderID as id, 'Doctor' as type, submissionDate as entry_date, status, notes FROM Doctor_Request "
+            "SELECT doctorRequestID as id, 'Doctor' as type, submissionDate as entry_date, status, notes FROM Doctor_Request "
             "WHERE dateSeen IS NOT NULL AND residentID = ?", (resident_id,))
         closed_doctor_requests = cursor.fetchall()
 
     return closed_travel_requests + closed_maintenance_requests + closed_doctor_requests
+
+@app.route('/resident-database', methods=['GET', 'POST'])
+def resident_database():
+    if request.method == 'POST':
+        resident_id = request.form.get('search_resident_id')
+        room_number = request.form.get('search_room_number')
+
+        # Check that a value was entered
+        if not resident_id and not room_number:
+            error = "Please enter Resident ID or Room Number."
+            return render_template('resident_database.html', error_message=error)
+
+        # Query the resident table
+        if resident_id:
+            query = "SELECT * FROM Residents WHERE residentID = ?"
+            params = (resident_id,)
+        else:
+            query = "SELECT * FROM Residents WHERE roomNumber = ?"
+            params = (room_number,)
+
+        with db_connection() as connection:
+            cursor = connection.cursor()
+            resident_data = cursor.execute(query, params).fetchone()
+            resident_id = resident_data['residentID']
+
+            if resident_data:
+                # Query emergency contact
+                emergency_contact_query = "SELECT emergencyContactFullName, emergencyContactPhoneNumber FROM Residents WHERE residentID = ?"
+                emergency_contact_params = (resident_id,)
+                emergency_contact_data = cursor.execute(emergency_contact_query, emergency_contact_params).fetchone()
+
+                # Query visitor list
+                visitor_list_query = "SELECT visitorFirstName, visitorLastName, phoneNumber FROM Visitors WHERE residentID = ?"
+                visitor_list_params = (resident_id,)
+                visitor_list = cursor.execute(visitor_list_query, visitor_list_params).fetchall()
+
+                return render_template('resident_database.html', resident_data=resident_data,
+                                       emergency_contact_data=emergency_contact_data, visitor_list=visitor_list)
+
+            else:
+                error_message = "Resident not found."
+                return render_template('resident_database.html', error_message=error_message)
+
+        return render_template('resident_database.html')
 
 @app.route('/logout', methods=['POST'])
 def logout():
