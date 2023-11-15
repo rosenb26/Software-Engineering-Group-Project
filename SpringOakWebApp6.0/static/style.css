@@ -1,0 +1,220 @@
+#banner {
+    text-align: center; /* Centers inline or inline-block elements horizontally */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%; /* You can adjust this value to fit your needs */
+}
+
+#banner img {
+    display: inline-block; /* Makes the image an inline-block element so it can be centered by text-align */
+    max-width: 100%; /* Ensures the image is responsive and does not overflow its container */
+    height: auto; /* Maintains the aspect ratio of the image */
+}
+
+body,
+.container {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+body {
+    background-color: #702c4c;
+}
+
+.button-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.btn {
+    font-size: 18px;
+    padding: 15px 30px;
+    border-radius: 10px;
+    transition: transform 0.2s;
+    background-color: #4CAF50;
+    color: white
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    background-color: #388E3C;  /* Adjusted color for a more noticeable hover effect */
+}
+
+h1 {
+    border-bottom: 3px solid #4CAF50;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+.mt-5 {
+    text-align: center;
+}
+.mb-3 {
+    display: flex;
+    align-items: center; /* This will vertically center the label with the input */
+    margin-bottom: 1rem; /* Space between each form-group */
+}
+
+label {
+    margin-right: 0; /* Optional: space between label and input */
+    white-space: nowrap; /* Ensures the label does not wrap and stays in a single line */
+    flex-basis: 30%; /* Adjust the percentage as needed, giving an explicit width to the label */
+    text-align: right; /* Aligns the text to the right, close to the input field */
+    font-size: 24px;
+}
+input {
+    margin-bottom: .5rem;
+}
+/* Increase width of input elements */
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="tel"] {
+    width: 50%; /* half width */
+    height: 2rem;
+    margin: auto;
+}
+
+button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.registration-card {
+    padding: 0;
+    border: 2px solid 4caf50;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.registration-card h2 {
+    margin-bottom: 40px;
+    color: #4CAF50;
+    font-size: 38px;
+}
+
+.register-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
+}
+
+.register-button:hover {
+    background-color: #388E3C;
+}
+
+/* Input focus style for better user experience */
+input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Margin adjustments for better spacing between form elements */
+.mb-3 {
+    margin-bottom: 1.5rem;
+}
+
+/* Enhance the look of the date input to make it consistent across browsers */
+input[type="date"] {
+    appearance: none;
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #ced4da; /* Border color */
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem; /* Padding to match other inputs */
+}
+
+/* Optional: Add some padding at the bottom of the form for better spacing */
+form {
+    padding-bottom: 1rem;
+}
+/* Additional responsive design for smaller screens */
+@media (max-width: 768px) {
+    .registration-card,
+    .request-buttons button,
+    .logout-button {
+        width: 90%; /* Makes the card and buttons wider on smaller screens */
+    }
+
+    label, .mb-3, input[type="text"], input[type="date"], input[type="email"], input[type="tel"] {
+        flex-direction: column; /* Stack label and input on smaller screens */
+        align-items: flex-start; /* Align items to the start of the flex container */
+    }
+
+    label {
+        margin-bottom: 0.5rem; /* Adds space between label and input */
+        text-align: left; /* Aligns the label to the left */
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"] {
+        width: 100%; /* Full width inputs on smaller screens */
+    }
+}
+/* Logout button styling to match register button */
+.logout-button {
+    background-color: #d9534f; /* Bootstrap 'btn-danger' color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto 20px auto; /* Adds margin at the bottom */
+    width: 50%;
+    text-align: center;
+}
+
+.logout-button:hover {
+    background-color: #c9302c; /* Darker red for hover effect */
+}
+
+/* Ensure that all buttons inside the .request-buttons container have the same style */
+.request-buttons button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 10px auto; /* Adds space between buttons */
+    width: 50%;
+    text-align: center;
+}
+
+.request-buttons button:hover {
+    background-color: #388E3C;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <!-- Home button (unchanged) -->
+            <a href="/dashboard" class="navbar-brand btn btn-dark btn-lg me-2">Home</a>
+
+            <!-- Other buttons styled similar to 'Add New Resident' -->
+            <a href="/visitor-dashboard" class="btn btn-primary btn-lg me-2">Visitor Dashboard</a>
+            <a href="/visitors?type=checked_in" class="btn btn-primary btn-lg me-2">Checked In Visitors</a>
+            <a href="/visitors?type=checked_out" class="btn btn-primary btn-lg">Checked Out Visitors</a>
+        </div>
+    </nav>
+    <div class="modal fade" id="editResidentModal" tabindex="-1" aria-labelledby="editResidentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editResidentModalLabel">Edit Resident</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form to edit resident by ID, action pointing to /edit-resident -->
+                    <form action="/edit-resident" method="get">
+                        <div class="mb-3">
+                            <label for="resident_id" class="form-label">Resident ID:</label>
+                            <input type="number" class="form-control" id="resident_id" name="resident_id" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-info">Edit Resident</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+    <div class="container mt-5">
+        <h1 class="p-2 bg-success text-white">Registered Visitors</h1>
+   
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Resident Name</th>
+                        <th>Date</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Check-In Time</th>
+                        <th>Check-Out Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visitor in visitors %}
+                    <tr>
+                        <td>{{ visitor.name }}</td>
+                        <td>{{ visitor.resident_name }}</td>
+                        <td>{{ visitor.date if visitor.date else 'N/A' }}</td>
+                        <td>{{ visitor.phone }}</td>
+                        <td>{{ visitor.email }}</td>
+                        <td>{{ visitor.local_checkin_time }}</td>
+                        <td>{{ visitor.local_checkout_time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

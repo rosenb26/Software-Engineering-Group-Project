@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+    <title>Resident Requests</title>
+</head>
+<body>
+    <div id="banner">
+        <!-- Use the same banner image as in your registration form -->
+        <img src="{{ url_for('static', filename='banner2.png') }}" alt="Spring Oak Resident Requests">
+    </div>
+
+    <!-- Container for the request card, similar to the registration card -->
+    <div class="container mt-5">
+        <div class="registration-card">
+            <h2>Resident Requests</h2>
+            <!-- Logout button -->
+            <form action="/resident-logout" method="post" class="mb-3">
+            <button type="submit" class="btn btn-danger">Log Out</button>
+            </form>
+            <!-- Buttons for the different types of requests -->
+            <div class="mb-3">
+                <button onclick="location.href='/request-type-1'" class="register-button">Request Type 1</button>
+            </div>
+            <div class="mb-3">
+                <button onclick="location.href='/request-type-2'" class="register-button">Request Type 2</button>
+            </div>
+            <div class="mb-3">
+                <button onclick="location.href='/request-type-3'" class="register-button">Request Type 3</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
