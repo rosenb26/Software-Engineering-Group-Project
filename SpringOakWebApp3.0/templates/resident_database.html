@@ -1,56 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resident Database</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-    <h1>Resident Database</h1>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <style>
+      #banner {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 18%;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="vh-100" style="background-color: #702c4c">
+      <img
+        id="banner"
+        src="https://career-website.cwydle.repl.co/static/banner2.png"
+      />
+      <div class="container py-5 h-73">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem">
+              <div class="card-body p-5 text-center">
+                <h3 class="mb-3">Resident Database</h3>
+                <form method="POST" action="{{ url_for('resident_database') }}">
+                  <div class="form-outline mb-4">
+                    <label for="search_resident_id"
+                      >Search by Resident ID:</label
+                    >
+                    <input
+                      type="text"
+                      id="search_resident_id"
+                      name="search_resident_id"
+                    />
+                  </div>
 
-    <form method="POST" action="{{ url_for('resident_database') }}">
-        <div>
-            <label for="search_resident_id">Search by Resident ID:</label>
-            <input type="text" id="search_resident_id" name="search_resident_id">
+                  <div class="form-outline mb-4">
+                    <label for="search_room_number"
+                      >Search by Room Number:</label
+                    >
+                    <input
+                      type="text"
+                      id="search_room_number"
+                      name="search_room_number"
+                    />
+                  </div>
+
+                  <button
+                    class="btn btn-primary btn-lg btn-block"
+                    type="submit"
+                  >
+                    Search
+                  </button>
+                </form>
+
+                {% if resident_data %}
+                <h2>Resident Profile</h2>
+                <ul>
+                  <li>
+                    <strong>First Name:</strong> {{
+                    resident_data['residentFirstName'] }}
+                  </li>
+                  <li>
+                    <strong>Last Name:</strong> {{
+                    resident_data['residentLastName'] }}
+                  </li>
+                  <li>
+                    <strong>Birth Date:</strong> {{ resident_data['birthdate']
+                    }}
+                  </li>
+                  <li>
+                    <strong>Room Number:</strong> {{ resident_data['roomNumber']
+                    }}
+                  </li>
+                  <li>
+                    <strong>Entry Date:</strong> {{ resident_data['enterDate']
+                    }}
+                  </li>
+                  <li>
+                    <strong>Insurance:</strong> {{ resident_data['insurance'] }}
+                  </li>
+                </ul>
+
+                <h2>Emergency Contact</h2>
+                <ul>
+                  <li>
+                    <strong>Full Name:</strong> {{
+                    resident_data['emergencyContactFullName'] }}
+                  </li>
+                  <li>
+                    <strong>Phone Number:</strong> {{
+                    resident_data['emergencyContactPhoneNumber'] }}
+                  </li>
+                </ul>
+
+                <h2>Visitor List</h2>
+                <ul>
+                  {% for visitor in visitor_list %}
+                  <li>
+                    <strong>Full Name:</strong> {{ visitor['visitorFirstName']
+                    }} {{ visitor['visitorLastName'] }}
+                  </li>
+                  <li>
+                    <strong>Phone Number:</strong> {{ visitor['phoneNumber'] }}
+                  </li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+
+                <p>{{ error_message }}</p>
+                <hr class="my-4" />
+                <a
+                  href="{{url_for('dashboard')}}"
+                  type="button"
+                  class="btn btn-primary btn-lg btn-block btn-danger"
+                  >Go Back</a
+                >
+                <a
+                  href="{{ url_for('register') }}"
+                  type="button"
+                  class="btn btn-primary btn-lg btn-block"
+                  >Register New Resident</a
+                >
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div>
-            <label for="search_room_number">Search by Room Number:</label>
-            <input type="text" id="search_room_number" name="search_room_number">
-        </div>
-
-        <button type="submit">Search</button>
-    </form>
-
-    {% if resident_data %}
-        <h2>Resident Profile</h2>
-        <ul>
-            <li><strong>First Name:</strong> {{ resident_data['residentFirstName'] }}</li>
-            <li><strong>Last Name:</strong> {{ resident_data['residentLastName'] }}</li>
-            <li><strong>Birth Date:</strong> {{ resident_data['birthdate'] }}</li>
-            <li><strong>Room Number:</strong> {{ resident_data['roomNumber'] }}</li>
-            <li><strong>Entry Date:</strong> {{ resident_data['enterDate'] }}</li>
-            <li><strong>Insurance:</strong> {{ resident_data['insurance'] }}</li>
-        </ul>
-
-        <h2>Emergency Contact</h2>
-        <ul>
-            <li><strong>Full Name:</strong> {{ resident_data['emergencyContactFullName'] }}</li>
-            <li><strong>Phone Number:</strong> {{ resident_data['emergencyContactPhoneNumber'] }}</li>
-        </ul>
-
-        <h2>Visitor List</h2>
-        <ul>
-            {% for visitor in visitor_list %}
-                <li><strong>Full Name:</strong> {{ visitor['visitorFirstName'] }} {{ visitor['visitorLastName'] }}</li>
-                <li><strong>Phone Number:</strong> {{ visitor['phoneNumber'] }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <p>{{ error_message }}</p>
-
-    <a href="{{ url_for('register') }}"><button>Register New Resident</button></a>
-</body>
+      </div>
+    </section>
+  </body>
 </html>
