@@ -2,7 +2,7 @@ import sqlite3
 import time
 from datetime import datetime
 from flask_bootstrap import Bootstrap5
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import re
 
 app = Flask(__name__)
@@ -448,6 +448,42 @@ def resident_database():
                 return render_template('resident_database.html', error_message=error_message)
 
     return render_template('resident_database.html')
+
+@app.route('/admin-requests')
+def admin_requests():
+    return render_template('admin_requests.html')
+
+@app.route('/get-requests/<request_type>', methods=['GET'])
+def get_requests(request_type):
+    with db_connection() as connection:
+        cursor = connection.cursor()
+
+        if request_type == 'travel':
+            data = cursor.execute('SELECT * FROM Travel_Request').fetchall()
+        elif request_type == 'maintenance':
+            data = cursor.execute('SELECT * FROM Maintenance_Request').fetchall()
+        elif request_type == 'doctor':
+            data = cursor.execute('SELECT * FROM Doctor_Request').fetchall()
+        else:
+            # Handle other request types as needed
+            data = []
+
+    result = []
+    for entry in data:
+        result.append({
+            'Request ID': entry['travelRequestID'] if request_type == 'travel' else (
+                entry['workID'] if request_type == 'maintenance' else entry['doctorRequestID']
+            ),
+            'Submission Date': entry['submissionDate'],
+            'Resident Full Name': f"{entry['residentFirstName']} {entry['residentLastName']}",
+            'Date Requested': entry.get('dateRequested', entry.get('dateCompleted', entry.get('dateSeen'))),
+            'Location Requested': entry.get('locationRequested', entry.get('workType', entry.get('visitType'))),
+            'Date Traveled': entry['dateTraveled'] if request_type == 'travel' else entry['dateCompleted'] if request_type == 'maintenance' else entry['dateSeen'],
+            'Status': entry['status'],
+            'Notes': entry['notes']
+        })
+
+    return jsonify(result)
 
 @app.route('/logout', methods=['POST'])
 def logout():

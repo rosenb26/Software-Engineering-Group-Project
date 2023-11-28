@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Requests</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyFC/W8/WF/iD6hOz2Sf1Y53tVfKxYfPWW"
+          crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="mb-3">
+    <a href="/admin-requests" class="btn btn-primary me-2">Home</a>
+    <a href="#" class="btn btn-primary me-2" onclick="fetchRequests('travel')">Travel Requests</a>
+    <a href="#" class="btn btn-primary me-2" onclick="fetchRequests('maintenance')">Maintenance Requests</a>
+    <a href="#" class="btn btn-primary" onclick="fetchRequests('doctor')">Doctor Requests</a>
+</div>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Admin Requests</h1>
+
+    <div id="requestTable" class="table-responsive mt-4"></div>
+</div>
+
+<script>
+    function fetchRequests(requestType) {
+        fetch(`/get-requests/${requestType}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('requestTable').innerHTML = generateTable(data, requestType);
+            });
+    }
+
+    function generateTable(data, requestType) {
+        let tableHtml = '<table class="table table-bordered table-striped mt-4">';
+        let headers = [];
+
+        if (requestType === 'travel') {
+            headers = ['Request ID', 'Submission Date', 'Resident Full Name', 'Date Requested', 'Location Requested', 'Date Traveled', 'Status', 'Notes'];
+        } else if (requestType === 'maintenance') {
+            headers = ['Work ID', 'Submission Date', 'Work Type', 'Resident Full Name', 'Room Number', 'Date Completed', 'Status', 'Notes'];
+        } else if (requestType === 'doctor') {
+            headers = ['Request ID', 'Submission Date', 'Visit Type', 'Resident Full Name', 'Date Requested', 'Location Requested', 'Date Seen', 'Status', 'Notes'];
+        }
+
+        tableHtml += '<thead class="thead-dark"><tr>';
+        headers.forEach(header => {
+            tableHtml += `<th>${header}</th>`;
+        });
+        tableHtml += '</tr></thead><tbody>';
+
+        data.forEach(entry => {
+            tableHtml += '<tr>';
+            headers.forEach(key => {
+                tableHtml += `<td>${entry[key]}</td>`;
+            });
+            tableHtml += '</tr>';
+        });
+
+        tableHtml += '</tbody></table>';
+        return tableHtml;
+    }
+</script>
+
+<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+
+</body>
+
+</html>
