@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Resident Dashboard</h1>
+        <div class="d-flex flex-wrap">
+            <a href="/travel-requests" class="m-2">
+                <button class="btn btn-primary btn-lg">Travel Request</button>
+            </a>
+            <a href="/maintenance-requests" class="m-2">
+                <button class="btn btn-primary btn-lg">Maintenance Request</button>
+            </a>
+            <a href="/doctor-requests" class="m-2">
+                <button class="btn btn-primary btn-lg">Doctor Request</button>
+            </a>
+            <form action="/logout" method="post" class="m-2">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
