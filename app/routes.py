@@ -49,11 +49,11 @@ def residents():
     columnNames = ["First Name", "Last Name", "Room Number"]
     return render_template("table.html", items=residents, header="Residents", columnNames=columnNames)
 
-@app.route("/requests")
-def requests():
-    requests = q.allRequests()
-    columnNames = ["Description", "First Name", "Last Name", "Room Number"]
-    return render_template("table.html", items=requests, header="Requests", columnNames=columnNames)
+# @app.route("/requests")
+# def requests():
+#     requests = q.allRequests()
+#     columnNames = ["Description", "First Name", "Last Name", "Room Number"]
+#     return render_template("table.html", items=requests, header="Requests", columnNames=columnNames)
 
 @app.route("/add-resident", methods=["GET", "POST"])
 def addResident():
@@ -72,4 +72,6 @@ def dashboard():
 def logout():
     return redirect(url_for("login"))
 
-
+@app.route("/add-requests")
+def requests():
+    return render_template("requests.html")
