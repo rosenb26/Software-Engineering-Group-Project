@@ -28,20 +28,14 @@ def db_connection():
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    cursor = db_connection()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-        # Check credentials
-        data = cursor.execute('SELECT * FROM Staff_Login WHERE username = ? AND password = ?', (username, password)).fetchone()
-        if data:
-            session['loggedin'] = True
-            session['id'] = data['staffID']
-            session['username'] = data['username']
+        if username == STAFF_USERNAME and password == STAFF_PASSWORD:
             return redirect(url_for('dashboard'))
         else:
-            return "Invalid username or password. Please try again."
+            incorrect_login = True
+            return render_template('login.html', incorrect_login=incorrect_login)
     return render_template('login.html')
 
 
